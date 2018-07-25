@@ -2,6 +2,7 @@
     "name": "cogitools/whatdidido",
     "description": "WhatDidIDo commit reporting utility to help developers figure out what they did so they can put it on their timesheet.",
     "keywords": ["whatdidido", "commit reporting", "time tracking", "timesheet", "utility"],
+    "homepage": "http://github.com/cogitools/whatdidido",
     "license": "MIT",
     "authors": [
         {
