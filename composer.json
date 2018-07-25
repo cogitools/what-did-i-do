@@ -1,5 +1,5 @@
 {
-    "name": "cogiools/whatdidido",
+    "name": "cogitools/whatdidido",
     "description": "WhatDidIDo commit reporting utility to help developers figure out what they did so they can put it on their timesheet.",
     "keywords": ["whatdidido", "commit reporting", "time tracking", "timesheet", "utility"],
     "license": "MIT",
