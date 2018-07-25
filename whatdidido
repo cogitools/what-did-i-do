@@ -1,0 +1,214 @@
+#!/usr/bin/env php
+<?php
+
+WhatDidIDo::run();
+
+class WhatDidIDo
+{
+	public $short_options =
+        's::'. # since (+ val)
+        'u::'. # until (+ val)
+        'b::'. # before (+ val)
+        'a::'. # after (+ val)
+        'm'.   # yesterday
+        'w'.   # with-body
+        'y'.   # yesterday
+        't'.   # today
+        'h';   # help
+
+    public $long_options = [
+        'since::',   # since (+ val)
+        'until::',   # until (+ val)
+        'before::',  # before (+ val)
+        'after::',   # after (+ val)
+        'multiline', # yesterday
+        'with-body', # with-body
+        'yesterday', # yesterday
+        'today',     # today
+        'help'       # help
+    ];
+
+    public $params = [];
+    public $params_count = 0;
+    public $params_keys = [];
+
+    public $author = '';
+    public $since = '';
+    public $since_default = '--since=yesterday.00:00';
+    public $until = '';
+    public $before = '';
+    public $after = '';
+    public $seperator = " ";
+    public $multiline = false;
+    public $withbody = false;
+    public $commits = [];
+
+
+    public function __construct()
+    {
+        $this->getOptions();
+        $this->captureParams();
+        $this->getAuthor();
+    }
+
+    public function getOptions()
+    {
+        $this->params = getopt($this->short_options, $this->long_options);
+        $this->params_count = count($this->params);
+        $this->params_keys = array_keys($this->params);
+    }
+
+    public function captureParams()
+    {
+        if ($this->params_count === 0) {
+            $this->since = $this->since_default;
+            return;
+        }
+        foreach ($this->params_keys as $key) {
+            if (($key == 'h') || ($key == 'help')) {
+                self::help();
+                exit();
+            } elseif (($key == 'm') || ($key == 'multiline')) {
+              $this->seperator = "\n";
+              $this->multiline = true;
+              if ($this->since === '') { $this->since = $this->since_default; }
+            } elseif (($key == 'w') || ($key == 'with-body')) {
+              $this->withbody = true;
+              if ($this->since === '') { $this->since = $this->since_default; }
+            } elseif (($key == 'y') || ($key == 'yesterday')) {
+              $this->since = "--since=yesterday.00:00";
+              $this->until = "--until=today.00:00";
+            } elseif (($key == 't') || ($key == 'today')) {
+              $this->since = "--since=today.00:00";
+            } elseif (($key == 's') || ($key == 'since')) {
+              $this->since = "--since='".$this->params[$key]."'";
+            } elseif (($key == 'u') || ($key == 'until')) {
+              $this->until = "--until='".$this->params[$key]."'";
+            } elseif (($key == 'b') || ($key == 'before')) {
+              $this->before = "--before='".$this->params[$key]."'";
+            } elseif (($key == 'a') || ($key == 'after')) {
+              $this->after = "--after='".$this->params[$key]."'";
+            } else {
+              die("Error: Unrecognized command line parameter.\n");
+            }
+        }
+    }
+
+    public function getAuthor()
+    {
+        $which_git = `which git`;
+        if (!$which_git) { die("Error: Could not find git.\n"); }
+        $author = trim(`git config user.name`);
+        if (!$author) { die("Error: Could not find git user name.\n"); }
+        $this->author = $author;
+    }
+
+    public function collectCommits()
+    {
+        $extras = "$this->since $this->until $this->before $this->after";
+        $log =`git log --reverse --pretty=tformat:"%ad%x1E%s%x1E%b%x1D" --date=short --author="$this->author" $extras`;
+        if (!$log)  { echo "Could not find commits to log.\n"; exit(); }
+        foreach(explode("\x1D\n", $log) as $line) {
+            if (trim($line) == '') { continue; }
+            $cols = explode("\x1E", $line, 3);
+            $cols[1] = $this->cleanupSubject($cols[1]);
+            $cols[2] = $this->cleanupBody($cols[2]);
+            $this->commits[$cols[0]][] = 
+            	($this->withbody && $cols[2])? 
+	            	$cols[1].$this->seperator.$cols[2] :
+	            	$cols[1];
+        }
+    }
+
+    public function cleanupSubject($subject)
+    {
+        $cleaned_line = ucfirst(trim($subject));
+        if (substr($cleaned_line,-1) != '.') {
+              $cleaned_line .= '.';
+        }
+        return $cleaned_line;
+    }
+
+    public function cleanupBody($body)
+    {
+        if (!$body) { return; }
+        return $this->cleanupSubject( implode(explode("\n", $body), $this->seperator) );
+    }
+
+    public function generateOutput()
+    {
+        foreach ($this->commits as $date => $set) {
+            echo "---- ".$date." ----\n";
+            echo implode($set, $this->seperator);
+            echo "\n";
+        }
+    }
+
+    public function generateTagline()
+    {
+        echo "--------------------\n".
+        "Get automatic direct-to-time-tracker commit logging with\n".
+        "Commit Harvester - Another Fine Product of Cogitools Software\n".
+        "http://commitharvester.com\n";
+    }
+
+    public static function run()
+    {
+        $harvester = new static();
+        $harvester->collectCommits();
+        $harvester->generateOutput();
+        $harvester->generateTagline();
+    }
+
+    public static function help()
+    {
+
+echo <<<EOT
+WhatDidIDo Command Line Utility
+    Collect your commit subjects to copy/paste into your time tracker.
+    The commits are assembled into single-line text blocks for each day.
+    This makes it very easy to select the text.
+    Pro tip: try tripple clicking the text on a Mac - it selects the whole line.
+
+Default (no parameter)
+    Display 2 days worth of commits (yesterday & today).
+    This is the most commonly needed set of commits.
+
+-y/--yesterday
+    Display just yesterday's commits.
+
+-t/--today
+    Display just today's commits.
+
+-m/--multiline
+    Display the commits with each subject on it's own line.
+
+-w/--with-body
+    Include the body of the commit as well as the subject.
+
+-b/--before <argument>
+    Display the commits before a particular date.
+    This parameter is passed through to git log.
+
+-a/--after <argument>
+    Display the commits after a particular date.
+    This parameter is passed through to git log.
+
+-s/--since <argument>
+    Display the commits since a particular date.
+    This parameter is passed through to git log.
+
+-u/--until <argument>
+    Display the commits until a particular date.
+    This parameter is passed through to git log.
+
+This script is Another Fine Product of Cogitools Software.
+Get automatic direct-to-time-tracker commit logging with Commit Harvester.
+http://commitharvester.com
+
+EOT;
+
+    }
+}
+
+
