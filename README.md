@@ -16,37 +16,37 @@ More details coming soon.
 
 ## WhatDidIDo Parameters
 
-Default (no parameter) 
-    Display 2 days worth of commits (yesterday & today). 
-    This is the most commonly needed set of commits. 
+Default (no parameter)  
+    Display 2 days worth of commits (yesterday & today).  
+    This is the most commonly needed set of commits.  
 
--y/--yesterday 
-    Display just yesterday's commits. 
+-y/--yesterday  
+    Display just yesterday's commits.  
 
--t/--today 
-    Display just today's commits. 
+-t/--today  
+    Display just today's commits.  
 
--m/--multiline 
-    Display the commits with each subject on it's own line. 
+-m/--multiline  
+    Display the commits with each subject on it's own line.  
 
--w/--with-body 
-    Include the body of the commit as well as the subject. 
+-w/--with-body  
+    Include the body of the commit as well as the subject.  
 
--b/--before <argument> 
-    Display the commits before a particular date. 
-    This parameter is passed through to git log. 
+-b/--before <argument>  
+    Display the commits before a particular date.  
+    This parameter is passed through to git log.  
 
--a/--after <argument> 
-    Display the commits after a particular date. 
-    This parameter is passed through to git log. 
+-a/--after <argument>  
+    Display the commits after a particular date.  
+    This parameter is passed through to git log.  
 
--s/--since <argument> 
-    Display the commits since a particular date. 
-    This parameter is passed through to git log. 
+-s/--since <argument>  
+    Display the commits since a particular date.  
+    This parameter is passed through to git log.  
 
--u/--until <argument> 
-    Display the commits until a particular date. 
-    This parameter is passed through to git log. 
+-u/--until <argument>  
+    Display the commits until a particular date.  
+    This parameter is passed through to git log.  
 
 ## Git Log Utility
 
