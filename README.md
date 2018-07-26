@@ -10,9 +10,13 @@ This makes it very easy to select the text.
 
 ## Installation
 
+The best approach is to install WhatDidIDo globally via [composer](https://getcomposer.org) so you can use it in any of your git repositories.
+
 `composer global require cogitools/whatdidido`
 
-More details coming soon.
+Make sure it installed by checking the help.
+
+`whatdidido --help`
 
 ## WhatDidIDo Parameters
 
@@ -54,7 +58,7 @@ This utility is a based on git log, which is an incredibly powerful repoting too
 
 ## Commit Harvester for Automated Commit Harvesting
 
-WhatDidIDo is very useful for micro indy shops with no budget. But its biggest shortfall is that you have to go into each repo and run it to see what you did. If you're looking for a more complete, integrated, and automatic solution we've got [Commit Harvester](http://commitharvester.com). 
+WhatDidIDo is very useful for micro indy shops with no budget. But its biggest shortfall is that you have to go into each repo and run it to see what you did. If you're looking for a more complete, integrated, and automatic solution, so you never miss a billable commit, we've got [Commit Harvester](http://commitharvester.com). 
 
 ## License
 
