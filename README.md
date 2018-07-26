@@ -18,6 +18,19 @@ Make sure it installed by checking the help.
 
 `whatdidido --help`
 
+## Usage
+
+Navigate on your command line to any project that is a git repo and WhatDidIDo will report your commits. By default it renders what happened yesterday and today, so that you can easily copy that into your timesheets.
+
+`whatdidido`
+
+```
+---- 2018-07-25 ----
+Initial commit. Updated gitignore. Updated the readme. Created the whatdidido php script. Updated composer json. Stupid typo in compoers json. Added home page to composer. Updated readme with better line breaks.
+---- 2018-07-26 ----
+Update readme installation instructions. Update readme with better usage instructions.
+```
+
 ## WhatDidIDo Parameters
 
 Default (no parameter)  
